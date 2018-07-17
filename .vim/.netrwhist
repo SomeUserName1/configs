@@ -1,0 +1,7 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =5
+let g:netrw_dirhist_1='/home/hrobotics/ownCloud/Uni/6/cpp_pyintegration'
+let g:netrw_dirhist_2='/home/hrobotics/OpenCogFramework/atomspace/opencog'
+let g:netrw_dirhist_3='/home/hrobotics/OpenCogFramework/atomspace/opencog/atoms'
+let g:netrw_dirhist_4='/home/hrobotics/OpenCogFramework/atomspace/opencog/atoms/execution'
+let g:netrw_dirhist_5='/home/hrobotics/OpenCogFramework/atomspace/opencog/guile'

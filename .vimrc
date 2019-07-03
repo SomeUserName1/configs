@@ -12,34 +12,30 @@
 
     "vim-plug
     Plug 'junegunn/vim-plug'
-
-    Plug 'lervag/vimtex'
+    " Rust support
+    Plug 'rust-lang/rust.vim'
+	Plug 'prabirshrestha/async.vim'
+	Plug 'prabirshrestha/vim-lsp'
+	Plug 'prabirshrestha/asyncomplete.vim'
+	Plug 'prabirshrestha/asyncomplete-lsp.vim'
 
     " NerdTree
     Plug 'scrooloose/nerdtree' 
 
     " git integration
     Plug 'tpope/vim-fugitive'
+    
+    " Syntastic
+    Plug 'vim-syntastic/syntastic'
 
     " fancy statusline
     Plug 'vim-airline/vim-airline'
     Plug 'vim-airline/vim-airline-themes'
 
-    " virtualenvs
-    Plug 'plytophogy/vim-virtualenv'
- 
+
     " Multi-entry selection UI. FZF
     Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
     Plug 'junegunn/fzf.vim'
-
-    " deoplete auto complete
-    if has('nvim')
-        Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-    else
-        Plug 'Shougo/deoplete.nvim'
-        Plug 'roxma/nvim-yarp'
-        Plug 'roxma/vim-hug-neovim-rpc'
-    endif
 
     " Change Fontsize
     Plug 'drmikehenry/vim-fontsize'
@@ -53,25 +49,44 @@
     "colorscheme
     Plug 'dikiaap/minimalist'
 
-    Plug 'vim-syntastic/syntastic'
+    Plug 'autozimu/LanguageClient-neovim', {
+        \ 'branch': 'next',
+        \ 'do': 'bash install.sh',
+        \ }
+
+    " (Optional) Multi-entry selection UI.
+    Plug 'junegunn/fzf'
+
     " Initialize plugin system
     call plug#end()
 
-    " Required for operations modifying multiple buffers like rename.
 
+"==== Rust conf ============
+if executable('rls')
+        au User lsp_setup call lsp#register_server({
+                \ 'name': 'rls',
+                \ 'cmd': {server_info->['rustup', 'run', 'nightly', 'rls']},
+                \ 'whitelist': ['rust'],
+                \ })
+endif 
 
-"============ LangServerProtocol Config =========
-    let g:deoplete#enable_at_startup = 1
+"==== LanguageClient conf =========
+" Required for operations modifying multiple buffers like rename.
+" set hidden
+"
+ let g:LanguageClient_serverCommands = {
+	\ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
+	\ 'javascript': ['/usr/local/bin/javascript-typescript-stdio'],
+	\ 'javascript.jsx': ['tcp://127.0.0.1:2089'],
+	\ 'python': ['/usr/local/bin/pyls'],
+	\ 'ruby': ['~/.rbenv/shims/solargraph', 'stdio'],
+\ }
 
-    " syntastic settings
-    set statusline+=%#warningmsg#
-    set statusline+=%{SyntasticStatuslineFlag()}
-    set statusline+=%*
-
-    let g:syntastic_always_populate_loc_list = 1
-    let g:syntastic_auto_loc_list = 1
-    let g:syntastic_check_on_open = 1
-    let g:syntastic_check_on_wq = 0
+nnoremap <F5> :call LanguageClient_contextMenu()<CR>
+" Or map each action separately
+nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
+nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
 
 "==== GUndoTree Conf ==============
     let g:gundo_width = 60
@@ -89,13 +104,8 @@
     "remap ,a to ag
     nnoremap <leader>a :Ack
 
-
-"======= vimtex ==========
-    
-
 "============= UI =======================
     let mapleader=","   " , is the leader key
-    let maplocalleader=","
 
     set hidden          " allow hidden buffers *required by PlugInManager*
     set mouse=a         " mouse integration
@@ -121,11 +131,9 @@
     filetype plugin indent on
     set tabstop=4
     set softtabstop=4
-    set list
+    set expandtab
     set shiftwidth=4
-    set tw=80 ff=unix
-
-
+    
     " Folding
     set foldenable        " enable folding
     set foldlevelstart=0  " fold most parts (0-99)
@@ -145,7 +153,6 @@
     "move to start/end of the line
     nnoremap B ^
     nnoremap E $
-    nnoremap <C-w>d :bd<CR>
 
     "Highlighting
     "highlight last inserted text
@@ -158,14 +165,4 @@
     set directory=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
     set writebackup
 
-" Remove all trailing whitespaces in the file by doing ':TW'
-function TrimWhitespace()
-   let l:save = winsaveview()
-   %s/\s\+$//e
-   call winrestview(l:save)
-endfunction
-command! TW call TrimWhitespace()
 
-
-" OpenCog code style
-autocmd BufNewFile,BufReadPost * if match(expand("%:p:h"), "/opencog") >= 0 && &filetype == "cpp" | set ts=4 sw=4 tw=80 ff=unix cindent expandtab | endif

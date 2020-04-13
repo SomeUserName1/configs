@@ -1,0 +1,17 @@
+[user]
+	email = fabian.klopfer@ieee.org
+	name = Fabian Klopfer
+
+[format]
+    signoff = true
+
+[core]
+    editor = nvim
+
+[sendemail]
+	smtpserver = smtp.gmail.com
+	smtpuser = fabian.klopfer@ieee.org
+    smtppassword = <TODO>
+	smtpencryption = tls
+	smtpserverport = 587
+  

@@ -111,6 +111,10 @@ export EDITOR='nvim'
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 DEFAULT_USER=`whoami`
+alias cat="bat"
+alias l="lsd"
+alias ll="lsd -l"
+alias la="lsd -la"
 
 export PATH=$PATH:~/.cargo/bin:~/bin:$PATH
 
@@ -141,3 +145,9 @@ compinit
 # Completion for kitty
 kitty + complete setup zsh | source /dev/stdin
 export LFS=/mnt/lfs
+
+
+function cleantex {
+rm **/*.(log|aux|bbl|bcf|blg|out|run.xml|snm|nav|toc|synctex.gz|vrb|backup)
+rm -r **/_minted*
+}

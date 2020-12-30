@@ -48,14 +48,28 @@
 
     "colorscheme
     Plug 'dikiaap/minimalist'
+    Plug 'danilo-augusto/vim-afterglow'
 
     Plug 'autozimu/LanguageClient-neovim', {
         \ 'branch': 'next',
         \ 'do': 'bash install.sh',
         \ }
+    
+    " Clock
+    Plug 'enricobacis/vim-airline-clock'
 
-    " (Optional) Multi-entry selection UI.
-    Plug 'junegunn/fzf'
+    " Autocomplete
+    Plug 'ycm-core/YouCompleteMe', {'do': './install.py --clangd-completer'}
+    
+    " CMake plugin
+    Plug 'cdelledonne/vim-cmake'
+    
+    " Nvim terminals
+    Plug 'kassio/neoterm'
+    " CTags plugin
+    Plug 'ludovicchabant/vim-gutentags'
+    " CTags tag bar
+    Plug 'preservim/tagbar'
 
     " Initialize plugin system
     call plug#end()
@@ -75,18 +89,30 @@ endif
 " set hidden
 "
  let g:LanguageClient_serverCommands = {
+    \ 'cpp': ['clangd', '--background-index', '--clang-tidy'],
 	\ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
+    \ 'c' : ['clangd', '-background-index'],
+    \ 'cmake' : ['cmake-language-server'],
 	\ 'javascript': ['/usr/local/bin/javascript-typescript-stdio'],
 	\ 'javascript.jsx': ['tcp://127.0.0.1:2089'],
-	\ 'python': ['/usr/local/bin/pyls'],
+	\ 'python': ['/usr/bin/pyls'],
 	\ 'ruby': ['~/.rbenv/shims/solargraph', 'stdio'],
+  \ 'java': ['/usr/bin/jdtls', '-data', getcwd()],
 \ }
 
 nnoremap <F5> :call LanguageClient_contextMenu()<CR>
 " Or map each action separately
-nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
-nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
 nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
+nnoremap <silent> fx :call LanguageClient#textDocument_codeAction()<CR>
+
+"====== Syntastic ============
+let g:syntastic_cpp_checkers=['clang-tidy']
+
+
+"====== YouCompleteMe Clangd =====
+let g:ycm_clangd_uses_ycmd_caching = 0
+let g:ycm_min_num_of_chars_for_completion = 9
+let g:ycm_clangd_binary_path = exepath("clangd")
 
 "==== GUndoTree Conf ==============
     let g:gundo_width = 60
@@ -122,8 +148,8 @@ nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
     set termguicolors
     set t_Co=256
     syntax on
-    colorscheme minimalist " colorscheme
-    let g:airline_theme='minimalist'
+    colorscheme afterglow " colorscheme
+    let g:airline_theme='afterglow'
     let g:airline_powerline_fonts = 1
     let g:airline#extensions#tabline#enabled = 1
 
@@ -165,4 +191,4 @@ nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
     set directory=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
     set writebackup
 
-
+    let g:c_syntax_for_h = 1
